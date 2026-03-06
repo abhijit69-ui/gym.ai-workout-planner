@@ -1,3 +1,11 @@
+import { Navigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+
 export default function HomePage() {
+  const { user, isLoading } = useAuth();
+
+  if (user && !isLoading) {
+    return <Navigate to='/profile' replace />;
+  }
   return <div>Home Page</div>;
 }
