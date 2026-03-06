@@ -49,9 +49,9 @@ const splitOptions = [
   { value: 'custom', label: 'Let AI Decide' },
 ];
 
-export default function Onboarding() {
-  const { user } = useAuth();
-  const [formdata, setFormData] = useState({
+export default function Onboardisng() {
+  const { user, saveProfile } = useAuth();
+  const [formdata, setFormDasta] = useState({
     goal: 'bulk',
     experience: 'intermediate',
     daysPerWeek: '4',
