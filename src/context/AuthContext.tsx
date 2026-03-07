@@ -54,7 +54,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user: neonUser, isLoading }}>
+    <AuthContext.Provider value={{ user: neonUser, isLoading, saveProfile }}>
       {children}
     </AuthContext.Provider>
   );

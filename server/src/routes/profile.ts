@@ -27,7 +27,6 @@ profileRouter.post('/', async (req: Request, res: Response) => {
       !daysPerWeek ||
       !sessionLength ||
       !equipment ||
-      !injuries ||
       !prefferedSplit
     ) {
       return res.status(400).json({ error: 'Missing required fields' });
