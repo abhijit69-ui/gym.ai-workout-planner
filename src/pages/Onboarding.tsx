@@ -5,7 +5,7 @@ import { Select } from '../components/ui/Select';
 import React, { useState } from 'react';
 import { Textarea } from '../components/ui/Textarea';
 import { Button } from '../components/ui/Button';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Loader2 } from 'lucide-react';
 import type { UserProfile } from '../types';
 
 const goalOptions = [
@@ -61,6 +61,8 @@ export default function Onboardisng() {
     injuries: '',
     prefferedSplit: 'upper_lower',
   });
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [error, setError] = useState('');
 
   function updateForm(field: string, value: string) {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -78,8 +80,14 @@ export default function Onboardisng() {
       injuries: formdata.injuries || undefined,
       prefferedSplit: formdata.prefferedSplit as UserProfile['prefferedSplit'],
     };
-    console.log(profile);
-    saveProfile(profile);
+    try {
+      await saveProfile(profile);
+      setIsGenerating(true);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to save profile');
+    } finally {
+      setIsGenerating(false);
+    }
   }
 
   if (!user) {
@@ -93,74 +101,88 @@ export default function Onboardisng() {
           {/* Progress Indicator */}
 
           {/* Step1: Questionaire */}
-          <Card variant='bordered'>
-            <h1 className='text-2xl font-bold mb-2'>Tell Us About Yourself</h1>
-            <p className='text-muted mb-6'>
-              Help us create the perfect plan for you.
-            </p>
+          {!isGenerating ? (
+            <Card variant='bordered'>
+              <h1 className='text-2xl font-bold mb-2'>
+                Tell Us About Yourself
+              </h1>
+              <p className='text-muted mb-6'>
+                Help us create the perfect plan for you.
+              </p>
 
-            <form onSubmit={handleQuestionaire} className='space-y-5'>
-              <Select
-                id='goal'
-                label="What's your primary goal?"
-                options={goalOptions}
-                value={formdata.goal}
-                onChange={(e) => updateForm('goal', e.target.value)}
-              />
-              <Select
-                id='experience'
-                label='Training experience'
-                options={experienceOptions}
-                value={formdata.experience}
-                onChange={(e) => updateForm('experience', e.target.value)}
-              />
-              <div className='grid grid-cols-2 gap-4'>
+              <form onSubmit={handleQuestionaire} className='space-y-5'>
                 <Select
-                  id='daysPerWeek'
-                  label='Days per week'
-                  options={daysOptions}
-                  value={formdata.daysPerWeek}
-                  onChange={(e) => updateForm('daysPerWeek', e.target.value)}
+                  id='goal'
+                  label="What's your primary goal?"
+                  options={goalOptions}
+                  value={formdata.goal}
+                  onChange={(e) => updateForm('goal', e.target.value)}
                 />
                 <Select
-                  id='sessionLength'
-                  label='Sessions Length'
-                  options={sessionOptions}
-                  value={formdata.sessionLength}
-                  onChange={(e) => updateForm('sessionLength', e.target.value)}
+                  id='experience'
+                  label='Training experience'
+                  options={experienceOptions}
+                  value={formdata.experience}
+                  onChange={(e) => updateForm('experience', e.target.value)}
                 />
-              </div>
-              <Select
-                id='equipment'
-                label='Equipment access'
-                options={equipmentOptions}
-                value={formdata.equipment}
-                onChange={(e) => updateForm('equipment', e.target.value)}
-              />
-              <Select
-                id='prefferedSplit'
-                label='Preffered Training Split'
-                options={splitOptions}
-                value={formdata.prefferedSplit}
-                onChange={(e) => updateForm('prefferedSplit', e.target.value)}
-              />
+                <div className='grid grid-cols-2 gap-4'>
+                  <Select
+                    id='daysPerWeek'
+                    label='Days per week'
+                    options={daysOptions}
+                    value={formdata.daysPerWeek}
+                    onChange={(e) => updateForm('daysPerWeek', e.target.value)}
+                  />
+                  <Select
+                    id='sessionLength'
+                    label='Sessions Length'
+                    options={sessionOptions}
+                    value={formdata.sessionLength}
+                    onChange={(e) =>
+                      updateForm('sessionLength', e.target.value)
+                    }
+                  />
+                </div>
+                <Select
+                  id='equipment'
+                  label='Equipment access'
+                  options={equipmentOptions}
+                  value={formdata.equipment}
+                  onChange={(e) => updateForm('equipment', e.target.value)}
+                />
+                <Select
+                  id='prefferedSplit'
+                  label='Preferred Training Split'
+                  options={splitOptions}
+                  value={formdata.prefferedSplit}
+                  onChange={(e) => updateForm('prefferedSplit', e.target.value)}
+                />
 
-              <Textarea
-                id='injuries'
-                label='Any injuries or limitations? (optional)'
-                placeholder='E.g., lower back issues, shoulder impingement...'
-                rows={3}
-                value={formdata.injuries}
-                onChange={(e) => updateForm('injuries', e.target.value)}
-              />
+                <Textarea
+                  id='injuries'
+                  label='Any injuries or limitations? (optional)'
+                  placeholder='E.g., lower back issues, shoulder impingement...'
+                  rows={3}
+                  value={formdata.injuries}
+                  onChange={(e) => updateForm('injuries', e.target.value)}
+                />
 
-              <div className='flex gap-3 pt-2'>
-                <Button type='submit' className='flex-1 gap-2'>
-                  Generate My Plan <ArrowRight className='w-4 h-4' />
-                </Button>
-              </div>
-            </form>
-          </Card>
+                <div className='flex gap-3 pt-2'>
+                  <Button type='submit' className='flex-1 gap-2'>
+                    Generate My Plan <ArrowRight className='w-4 h-4' />
+                  </Button>
+                </div>
+              </form>
+            </Card>
+          ) : (
+            <Card variant='bordered' className='text-center py-16'>
+              <Loader2 className='w-12 h-12 text-accent mx-auto mb-6 animate-spin' />
+              <h1 className='text-2xl font-bold mb-2'>Creating Your plan</h1>
+              <p className='text-muted'>
+                Our AI is generating your training program...
+              </p>
+            </Card>
+          )}
 
           {/* Step2: Generating */}
         </div>
