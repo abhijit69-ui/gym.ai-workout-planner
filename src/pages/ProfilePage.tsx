@@ -3,7 +3,7 @@ import { useAuth } from '../context/AuthContext';
 
 export default function ProfilePage() {
   const { user, isLoading } = useAuth();
-  const plan = false;
+  const plan = true;
 
   if (!user && !isLoading) {
     return <Navigate to='/auth/sign-in' replace />;
