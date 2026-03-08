@@ -78,7 +78,18 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
     } finally {
       isRefreshingRef.current = false;
     }
-  }, [neonUser.id]);
+  }, [neonUser?.id]);
+
+  useEffect(() => {
+    if (!isLoading) {
+      if (neonUser?.id) {
+        refreshData();
+      } else {
+        setPlan(null);
+      }
+      setIsLoading(false);
+    }
+  }, [neonUser?.id, isLoading, refreshData]);
 
   async function saveProfile(
     profileData: Omit<UserProfile, 'userId' | 'updatedAt'>,
