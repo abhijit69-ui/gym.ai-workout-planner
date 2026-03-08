@@ -2,8 +2,7 @@ import { Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 export default function ProfilePage() {
-  const { user, isLoading } = useAuth();
-  const plan = true;
+  const { user, isLoading, plan } = useAuth();
 
   if (!user && !isLoading) {
     return <Navigate to='/auth/sign-in' replace />;
