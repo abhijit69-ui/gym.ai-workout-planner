@@ -12,7 +12,7 @@ import { Card } from '../components/ui/Card';
 import PlanDisplay from '../components/plan/PlanDisplay';
 
 export default function ProfilePage() {
-  const { user, isLoading, plan } = useAuth();
+  const { user, isLoading, plan, generatePlan } = useAuth();
 
   if (!user && !isLoading) {
     return <Navigate to='/auth/sign-in' replace />;
@@ -40,7 +40,11 @@ export default function ProfilePage() {
             </p>
           </div>
 
-          <Button variant='secondary' className='gap-2'>
+          <Button
+            variant='secondary'
+            className='gap-2'
+            onClick={async () => await generatePlan()}
+          >
             <RefreshCcw className='w-4 h-4' />
             Re-generate Plan
           </Button>
